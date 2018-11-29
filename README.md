@@ -2,6 +2,7 @@
 Attempt on implementing conical gradient for `react-native-circular-progress` (see https://github.com/bgryszko/react-native-circular-progress/issues/41)
 
 ## Description
+- Migrated to `expo`
 - Migrated to `react-native-svg`
 - Used multiple paths and different linear gradients to implement the conical gradient
 
