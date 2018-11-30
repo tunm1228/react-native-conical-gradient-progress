@@ -1,33 +1,30 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Animated, View, ViewPropTypes } from 'react-native';
-import Svg, { Defs, Stop, G, Path, LinearGradient } from 'react-native-svg';
+import Svg, { Defs, Stop, G, Path, LinearGradient, Circle, Text } from 'react-native-svg';
 import { arc } from 'd3-shape';
 import range from 'lodash/range';
+import convert from 'color-convert';
 
-function calculateStopColor(i) {
+function calculateStopColor(i, beginColor, endColor, segments) {
   return [
-    Math.round(beginColor[0] + ((endColor[0] - beginColor[0]) * i) / noOfSeg),
-    Math.round(beginColor[1] + ((endColor[1] - beginColor[1]) * i) / noOfSeg),
-    Math.round(beginColor[2] + ((endColor[2] - beginColor[2]) * i) / noOfSeg),
+    Math.round(beginColor[0] + ((endColor[0] - beginColor[0]) * i) / segments),
+    Math.round(beginColor[1] + ((endColor[1] - beginColor[1]) * i) / segments),
+    Math.round(beginColor[2] + ((endColor[2] - beginColor[2]) * i) / segments),
   ];
 }
 
-const beginColor = [0x37, 0xba, 0xd6];
-const endColor = [0x90, 0x53, 0x87];
-const noOfSeg = 6;
 const LINEAR_GRADIENT_PREFIX_ID = 'gradientRing';
-const r1 = 90;
-const r2 = 100;
 
 export default class CircularProgress extends Component {
-  renderLinearGradients() {
+  static renderLinearGradients(state) {
+    const { r1, beginColor, endColor, segments } = state;
     let startColor = beginColor;
-    let stopColor = calculateStopColor(1);
+    let stopColor = calculateStopColor(1, beginColor, endColor, segments);
     let startAngle = 0;
-    let stopAngle = (2 * Math.PI) / noOfSeg;
+    let stopAngle = (2 * Math.PI) / segments;
 
-    return range(1, noOfSeg + 1).map(i => {
+    return range(1, segments + 1).map(i => {
       const linearGradient = (
         <LinearGradient
           id={LINEAR_GRADIENT_PREFIX_ID + i}
@@ -42,12 +39,58 @@ export default class CircularProgress extends Component {
         </LinearGradient>
       );
       startColor = stopColor;
-      stopColor = calculateStopColor(i + 1);
+      stopColor = calculateStopColor(i + 1, beginColor, endColor, segments);
       startAngle = stopAngle;
-      stopAngle += (2 * Math.PI) / noOfSeg;
+      stopAngle += (2 * Math.PI) / segments;
 
       return linearGradient;
     });
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const { width, size, beginColor, endColor, segments } = nextProps;
+    let nextState = {};
+
+    if (segments !== prevState.segments) {
+      nextState.segments = segments;
+    }
+
+    if (width !== prevState.width || size !== prevState.size) {
+      const r2 = size / 2;
+      nextState = {
+        ...nextState,
+        r1: r2 - width,
+        r2,
+        width,
+        size,
+      };
+    }
+
+    if (beginColor !== prevState.beginColorCached || endColor !== prevState.endColorCached) {
+      // CHANGE COLOR ORDER
+      nextState = {
+        ...nextState,
+        beginColorCached: beginColor,
+        endColorCached: endColor,
+        beginColor: convert.hex.rgb(endColor),
+        endColor: convert.hex.rgb(beginColor),
+      };
+    }
+
+    const keys = Object.keys(nextState);
+
+    if (keys.length) {
+      const combinedState = { ...prevState, ...nextState };
+      nextState.linearGradients = CircularProgress.renderLinearGradients(combinedState);
+    }
+    return keys.length ? nextState : null;
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {};
+    this.renderBackgroundPath.bind(this);
+    this.renderCirclePaths.bind(this);
   }
 
   extractFill() {
@@ -55,6 +98,7 @@ export default class CircularProgress extends Component {
   }
 
   renderBackgroundPath() {
+    const { r1, r2 } = this.state;
     const { size, width, backgroundColor } = this.props;
     const backgroundPath = arc()
       .innerRadius(r1)
@@ -66,50 +110,72 @@ export default class CircularProgress extends Component {
   }
 
   renderCirclePaths() {
+    const { r1, r2, segments } = this.state;
+    const { size, width, beginColor } = this.props;
     const fill = this.extractFill();
 
-    let numberOfPathsToDraw = Math.floor((2 * Math.PI * (fill / 100)) / ((2 * Math.PI) / noOfSeg));
-    let rem = ((2 * Math.PI * (fill / 100)) / ((2 * Math.PI) / noOfSeg)) % 1;
+    let numberOfPathsToDraw = Math.floor((2 * Math.PI * (fill / 100)) / ((2 * Math.PI) / segments));
+    let rem = ((2 * Math.PI * (fill / 100)) / ((2 * Math.PI) / segments)) % 1;
     if (rem > 0) {
       numberOfPathsToDraw++;
     }
     let startAngle = 0;
-    let stopAngle = -(2 * Math.PI) / noOfSeg;
+    let stopAngle = -(2 * Math.PI) / segments;
 
-    return range(1, numberOfPathsToDraw + 1).map(i => {
-      if (i === numberOfPathsToDraw && rem) {
-        stopAngle = -2 * Math.PI * (fill / 100);
-      }
-      const circlePath = arc()
-        .innerRadius(r1)
-        .outerRadius(r2)
-        .startAngle(startAngle)
-        .endAngle(stopAngle - 0.005);
+    return [
+      <Circle key="start_circle" cx={size / 2} cy={width / 2} r={width / 2} fill={beginColor} />,
+      ...range(1, numberOfPathsToDraw + 1).map(i => {
+        if (i === numberOfPathsToDraw && rem) {
+          stopAngle = -2 * Math.PI * (fill / 100);
+        }
+        const circlePath = arc()
+          .innerRadius(r1)
+          .outerRadius(r2)
+          .startAngle(startAngle)
+          .endAngle(stopAngle - 0.005);
 
-      const path = (
-        <Path
-          x={this.props.size / 2}
-          y={this.props.size / 2}
-          key={fill + i}
-          d={circlePath()}
-          fill={'url(#' + LINEAR_GRADIENT_PREFIX_ID + (noOfSeg - i + 1) + ')'}
-        />
-      );
-      startAngle = stopAngle;
-      stopAngle -= (2 * Math.PI) / noOfSeg;
+        const path = (
+          <Path
+            x={this.props.size / 2}
+            y={this.props.size / 2}
+            key={fill + i}
+            d={circlePath()}
+            fill={'url(#' + LINEAR_GRADIENT_PREFIX_ID + (segments - i + 1) + ')'}
+          />
+        );
+        startAngle = stopAngle;
+        stopAngle -= (2 * Math.PI) / segments;
 
-      return path;
-    });
+        return path;
+      }),
+      <Circle
+        key="end_circle"
+        cx={(r2 - (r2 - r1) / 2) * Math.sin(2 * Math.PI * (fill / 100) - Math.PI) + size / 2}
+        cy={(r2 - (r2 - r1) / 2) * Math.cos(2 * Math.PI * (fill / 100) - Math.PI) + size / 2}
+        r={width / 2}
+        fill={
+          'rgb(' +
+          calculateStopColor(
+            this.extractFill(),
+            this.state.endColor,
+            this.state.beginColor,
+            100
+          ).join(',') +
+          ')'
+        }
+      />,
+    ];
   }
 
   render() {
     const { size, rotation, style, children } = this.props;
+    const { linearGradients } = this.state;
     const fill = this.extractFill();
 
     return (
       <View style={style}>
-        <Svg width={size} height={size}>
-          <Defs>{this.renderLinearGradients()}</Defs>
+        <Svg width={size} height={size} scale="-1, 1" originX={size / 2}>
+          <Defs key="linear_gradients">{linearGradients}</Defs>
           <G rotate={rotation - 90}>
             {this.renderBackgroundPath()}
             {this.renderCirclePaths()}

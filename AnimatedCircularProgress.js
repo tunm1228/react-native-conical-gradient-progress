@@ -36,11 +36,7 @@ export default class AnimatedCircularProgress extends Component {
   render() {
     const { fill, prefill, ...other } = this.props;
 
-    return (
-      <Animated.View>
-        <AnimatedProgress {...other} fill={this.state.chartFillAnimation} />
-      </Animated.View>
-    );
+    return <AnimatedProgress {...other} fill={this.state.chartFillAnimation} />;
   }
 }
 
@@ -50,7 +46,8 @@ AnimatedCircularProgress.propTypes = {
   fill: PropTypes.number,
   prefill: PropTypes.number,
   width: PropTypes.number.isRequired,
-  tintColor: PropTypes.string,
+  beginColor: PropTypes.string,
+  endColor: PropTypes.string,
   backgroundColor: PropTypes.string,
   tension: PropTypes.number,
   friction: PropTypes.number,

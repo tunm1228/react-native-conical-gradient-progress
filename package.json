@@ -9,6 +9,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "color-convert": "^1.9.3",
     "d3-shape": "^1.2.2",
     "expo": "^31.0.2",
     "lodash": "^4.17.11",
