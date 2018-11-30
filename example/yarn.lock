@@ -3710,7 +3710,7 @@ react-native-branch@2.2.5:
 
 "react-native-conical-gradient-progress@git+https://github.com/MikePodgorniy/react-native-conical-gradient-progress":
   version "1.0.0"
-  resolved "git+https://github.com/MikePodgorniy/react-native-conical-gradient-progress#c0eea553c21a3d65b868675b0e8cd1a21f4a2f3d"
+  resolved "git+https://github.com/MikePodgorniy/react-native-conical-gradient-progress#ddabcb3d8da9c05cfd3cc83c88fb631d341dd50d"
   dependencies:
     prop-types "^15.6.0"
 
