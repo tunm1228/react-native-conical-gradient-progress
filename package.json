@@ -27,11 +27,14 @@
   },
   "homepage": "https://github.com/MikePodgorniy/react-native-conical-gradient-progress",
   "dependencies": {
-    "prop-types": "^15.6.0"
+    "prop-types": "^15.6.0",
+    "color-convert": "^1.9.3",
+    "d3-shape": "^1.2.2",
+    "lodash": "^4.17.11",
+    "react-native-svg": "^6.3.1"
   },
   "peerDependencies": {
     "react": ">=16.0.0",
-    "react-native": ">=0.39.0",
-    "react-native-svg": "^6.3.1"
+    "react-native": ">=0.39.0"
   }
 }
