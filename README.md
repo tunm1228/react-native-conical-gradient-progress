@@ -1,5 +1,6 @@
 # react-native-conical-gradient-progress
 
+:sunrise:
 Attempt on implementing conical gradient for `react-native-circular-progress` (see https://github.com/bgryszko/react-native-circular-progress/issues/41
 https://github.com/fdnhkj/react-native-conical-gradient)
 
