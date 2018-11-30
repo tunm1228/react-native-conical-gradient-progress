@@ -89,8 +89,6 @@ export default class CircularProgress extends Component {
   constructor(props) {
     super(props);
     this.state = {};
-    this.renderBackgroundPath.bind(this);
-    this.renderCirclePaths.bind(this);
   }
 
   extractFill() {
