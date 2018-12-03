@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Animated, View, ViewPropTypes } from 'react-native';
-import Svg, { Defs, Stop, G, Path, LinearGradient, Circle, Text } from 'react-native-svg';
+import { View, ViewPropTypes } from 'react-native';
+import Svg, { Defs, Stop, G, Path, LinearGradient, Circle } from 'react-native-svg';
 import { arc } from 'd3-shape';
 import range from 'lodash/range';
 import convert from 'color-convert';

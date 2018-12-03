@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { PropTypes } from 'prop-types';
-import { View, Animated, ViewPropTypes } from 'react-native';
+import { Animated, ViewPropTypes } from 'react-native';
 import CircularProgress from './CircularProgress';
 
 const AnimatedProgress = Animated.createAnimatedComponent(CircularProgress);
