@@ -3725,7 +3725,7 @@ react-native-branch@2.2.5:
 
 "react-native-conical-gradient-progress@git+https://github.com/MikePodgorniy/react-native-conical-gradient-progress":
   version "1.0.0"
-  resolved "git+https://github.com/MikePodgorniy/react-native-conical-gradient-progress#bfd910279d98ecfa7c91abd76fb61819581eae1b"
+  resolved "git+https://github.com/MikePodgorniy/react-native-conical-gradient-progress#e46dcd2c9c13729fe83c26712eecfaa63ae6bbb0"
   dependencies:
     color-convert "^1.9.3"
     d3-shape "^1.2.2"
