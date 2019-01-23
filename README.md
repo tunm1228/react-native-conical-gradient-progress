@@ -1,8 +1,14 @@
 # react-native-conical-gradient-progress
 
 :sunrise:
-Attempt on implementing conical gradient for `react-native-circular-progress` (see https://github.com/bgryszko/react-native-circular-progress/issues/41
-https://github.com/fdnhkj/react-native-conical-gradient)
+## Installation
+Install this component and `react-native-svg`:
+
+`npm i --save react-native-conical-gradient-progress react-native-svg`
+
+Link native code for SVG:
+
+`react-native link react-native-svg`
 
 ## Description
 - Can accept external Props `size,
@@ -26,9 +32,9 @@ https://github.com/fdnhkj/react-native-conical-gradient)
 ## Status
 ![iOS gif](conical_gradient_progress.png)
 
-
-
 ## References
+- https://github.com/bgryszko/react-native-circular-progress/issues/41
+- https://github.com/fdnhkj/react-native-conical-gradient
 - https://github.com/bgryszko/react-native-circular
 - http://jsfiddle.net/Cy7ec/3/
 - https://github.com/fdnhkj/react-native-conical-gradient
