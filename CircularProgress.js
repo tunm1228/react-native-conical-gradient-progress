@@ -109,28 +109,28 @@ export default class CircularProgress extends Component {
 
   renderCirclePaths() {
     const { r1, r2, segments } = this.state;
-    const { size, width, beginColor } = this.props;
+    const { size, width, beginColor, isClockwise } = this.props;
     const fill = this.extractFill();
-
+    const direction = isClockwise ? 1 : -1;
     let numberOfPathsToDraw = Math.floor((2 * Math.PI * (fill / 100)) / ((2 * Math.PI) / segments));
     let rem = ((2 * Math.PI * (fill / 100)) / ((2 * Math.PI) / segments)) % 1;
     if (rem > 0) {
       numberOfPathsToDraw++;
     }
     let startAngle = 0;
-    let stopAngle = -(2 * Math.PI) / segments;
+    let stopAngle = direction *(2 * Math.PI) / segments;
 
     return [
       <Circle key="start_circle" cx={size / 2} cy={width / 2} r={width / 2} fill={beginColor} />,
       ...range(1, numberOfPathsToDraw + 1).map(i => {
         if (i === numberOfPathsToDraw && rem) {
-          stopAngle = -2 * Math.PI * (fill / 100);
+          stopAngle = direction * 2 * Math.PI * (fill / 100);
         }
         const circlePath = arc()
           .innerRadius(r1)
           .outerRadius(r2)
           .startAngle(startAngle)
-          .endAngle(stopAngle - 0.005);
+          .endAngle(stopAngle + (0.005 * direction));
 
         const path = (
           <Path
@@ -142,13 +142,13 @@ export default class CircularProgress extends Component {
           />
         );
         startAngle = stopAngle;
-        stopAngle -= (2 * Math.PI) / segments;
+        stopAngle = direction * (2 * Math.PI) / segments + stopAngle;
 
         return path;
       }),
       <Circle
         key="end_circle"
-        cx={(r2 - (r2 - r1) / 2) * Math.sin(2 * Math.PI * (fill / 100) - Math.PI) + size / 2}
+        cx={(r2 - (r2 - r1) / 2) * Math.sin(2 * Math.PI * (fill / 100) - (!!isClockwise ? 0 : Math.PI)) + size / 2}
         cy={(r2 - (r2 - r1) / 2) * Math.cos(2 * Math.PI * (fill / 100) - Math.PI) + size / 2}
         r={width / 2}
         fill={
@@ -195,6 +195,7 @@ CircularProgress.propTypes = {
   tintColor: PropTypes.string,
   width: PropTypes.number.isRequired,
   linecap: PropTypes.string,
+  isClockwise: PropTypes.bool,
 };
 
 CircularProgress.defaultProps = {
