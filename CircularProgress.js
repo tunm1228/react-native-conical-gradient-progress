@@ -172,9 +172,9 @@ export default class CircularProgress extends Component {
 
     return (
       <View style={style}>
-        <Svg width={size} height={size} scale="-1, 1" originX={size / 2}>
+        <Svg width={size} height={size} scale="-1, 1">
           <Defs key="linear_gradients">{linearGradients}</Defs>
-          <G rotate={rotation - 90}>
+          <G rotation={rotation} originX={size / 2} originY={size / 2}>
             {this.renderBackgroundPath()}
             {this.renderCirclePaths()}
           </G>
@@ -200,6 +200,6 @@ CircularProgress.propTypes = {
 CircularProgress.defaultProps = {
   tintColor: 'black',
   backgroundColor: '#e4e4e4',
-  rotation: 90,
+  rotation: 0,
   linecap: 'butt',
 };
