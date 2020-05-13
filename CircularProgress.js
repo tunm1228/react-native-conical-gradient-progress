@@ -109,28 +109,28 @@ export default class CircularProgress extends Component {
 
   renderCirclePaths() {
     const { r1, r2, segments } = this.state;
-    const { size, width, beginColor, isClockwise } = this.props;
+    const { size, width, beginColor } = this.props;
     const fill = this.extractFill();
-    const direction = isClockwise ? 1 : -1;
+
     let numberOfPathsToDraw = Math.floor((2 * Math.PI * (fill / 100)) / ((2 * Math.PI) / segments));
     let rem = ((2 * Math.PI * (fill / 100)) / ((2 * Math.PI) / segments)) % 1;
     if (rem > 0) {
       numberOfPathsToDraw++;
     }
     let startAngle = 0;
-    let stopAngle = direction *(2 * Math.PI) / segments;
+    let stopAngle = (2 * Math.PI) / segments;
 
     return [
       <Circle key="start_circle" cx={size / 2} cy={width / 2} r={width / 2} fill={beginColor} />,
       ...range(1, numberOfPathsToDraw + 1).map(i => {
         if (i === numberOfPathsToDraw && rem) {
-          stopAngle = direction * 2 * Math.PI * (fill / 100);
+          stopAngle = 2 * Math.PI * (fill / 100);
         }
         const circlePath = arc()
           .innerRadius(r1)
           .outerRadius(r2)
           .startAngle(startAngle)
-          .endAngle(stopAngle + (0.005 * direction));
+          .endAngle(stopAngle);
 
         const path = (
           <Path
@@ -142,14 +142,14 @@ export default class CircularProgress extends Component {
           />
         );
         startAngle = stopAngle;
-        stopAngle = direction * (2 * Math.PI) / segments + stopAngle;
+        stopAngle += (2 * Math.PI) / segments;
 
         return path;
       }),
       <Circle
         key="end_circle"
-        cx={(r2 - (r2 - r1) / 2) * Math.sin(2 * Math.PI * (fill / 100) - (!!isClockwise ? 0 : Math.PI)) + size / 2}
-        cy={(r2 - (r2 - r1) / 2) * Math.cos(2 * Math.PI * (fill / 100) - Math.PI) + size / 2}
+        cx={(r2 - (r2 - r1) / 2) * Math.sin(-2 * Math.PI * (fill / 100) - Math.PI) + size / 2}
+        cy={(r2 - (r2 - r1) / 2) * Math.cos(-2 * Math.PI * (fill / 100) - Math.PI) + size / 2}
         r={width / 2}
         fill={
           'rgb(' +
@@ -172,9 +172,9 @@ export default class CircularProgress extends Component {
 
     return (
       <View style={style}>
-        <Svg width={size} height={size} scale="-1, 1">
+        <Svg width={size} height={size} scale="-1, 1" originX={size / 2}>
           <Defs key="linear_gradients">{linearGradients}</Defs>
-          <G rotation={rotation} originX={size / 2} originY={size / 2}>
+          <G rotate={rotation - 90}>
             {this.renderBackgroundPath()}
             {this.renderCirclePaths()}
           </G>
@@ -195,12 +195,11 @@ CircularProgress.propTypes = {
   tintColor: PropTypes.string,
   width: PropTypes.number.isRequired,
   linecap: PropTypes.string,
-  isClockwise: PropTypes.bool,
 };
 
 CircularProgress.defaultProps = {
   tintColor: 'black',
   backgroundColor: '#e4e4e4',
-  rotation: 0,
+  rotation: 90,
   linecap: 'butt',
 };
